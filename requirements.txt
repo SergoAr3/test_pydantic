@@ -1,0 +1,7 @@
+pytest~=8.3.4
+starlette~=0.41.3
+fastapi~=0.115.6
+pydantic~=2.10.3
+pydantic-extra-types~=2.10.1
+phonenumbers~=8.13.51
+httpx~=0.28.1
