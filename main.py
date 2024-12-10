@@ -7,7 +7,7 @@ app = FastAPI(docs_url='/')
 
 @app.post("/convert", response_model=OutputData)
 async def data_convert(data: InputData):
-    phone_number = (data.contacts.phone)
+    phone_number = data.contacts.phone
     response = {
         'address': data.address.value,
         'contacts': {
@@ -31,6 +31,7 @@ async def data_convert(data: InputData):
             "from": data.salary.from_,
             "to": data.salary.to
         },
+        'schedule': {'id': data.employment}
 
     }
 

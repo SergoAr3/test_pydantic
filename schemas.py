@@ -1,4 +1,6 @@
-from pydantic import BaseModel, EmailStr, Field
+import re
+
+from pydantic import BaseModel, EmailStr, Field, field_validator
 from typing import Optional, Dict
 
 
@@ -26,6 +28,17 @@ class Contacts(BaseModel):
     phone: str = '79999999999'
     email: EmailStr
 
+    @field_validator('phone')
+    @classmethod
+    def phone_validate(cls, value):
+        if value[0] == '+':
+            return value[1:]
+
+        if not re.fullmatch(r'[78]\d{10}', value):
+            raise ValueError("Phone number must start with 7 or 8 and be 11 digits long")
+
+        return value
+
 
 class InputData(BaseModel):
     description: str
@@ -50,4 +63,4 @@ class OutputData(BaseModel):
     name: str
     salary: int
     salary_range: Dict[str, int]
-    schedule: Dict[str, str] = {"id": "fullDay"}
+    schedule: Dict[str, str]
