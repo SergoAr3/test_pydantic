@@ -1,16 +1,16 @@
 import re
 
-from pydantic import BaseModel, EmailStr, Field, field_validator
-from typing import Optional, Dict
+from fastapi import HTTPException
+from pydantic import BaseModel, EmailStr, HttpUrl, Field, field_validator
 
 
 class Address(BaseModel):
     region: str
     city: str
-    street_type: Optional[str]
-    street: Optional[str]
-    house_type: Optional[str]
-    house: Optional[str]
+    street_type: str | None
+    street: str | None
+    house_type: str | None
+    house: str | None
     value: str
     lat: float
     lng: float
@@ -35,7 +35,7 @@ class Contacts(BaseModel):
             return value[1:]
 
         if not re.fullmatch(r'[78]\d{10}', value):
-            raise ValueError("Phone number must start with 7 or 8 and be 11 digits long")
+            raise HTTPException(422, "Phone number must start with 7 or 8 and be 11 digits long")
 
         return value
 
@@ -54,13 +54,13 @@ class OutputData(BaseModel):
     allow_messages: bool = True
     billing_type: str = 'packageOrSingle'
     business_area: int = 1
-    contacts: Dict[str, str | dict]
-    coordinates: Dict[str, float]
+    contacts: dict[str, str | dict]
+    coordinates: dict[str, float]
     description: str
-    experience: Dict[str, str] = {"id": "noMatter"}
+    experience: dict[str, str] = {"id": "noMatter"}
     html_tags: bool
-    image_url: str = "https://img.hhcdn.ru/employer-logo/3410666.jpeg"
+    image_url: HttpUrl = "https://img.hhcdn.ru/employer-logo/3410666.jpeg"
     name: str
     salary: int
-    salary_range: Dict[str, int]
-    schedule: Dict[str, str]
+    salary_range: dict[str, int]
+    schedule: dict[str, str]

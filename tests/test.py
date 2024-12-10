@@ -1,6 +1,7 @@
 import pytest
 import json
 
+from fastapi import HTTPException
 from starlette.testclient import TestClient
 
 
