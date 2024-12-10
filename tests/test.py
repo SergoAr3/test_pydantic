@@ -31,7 +31,7 @@ from starlette.testclient import TestClient
                     },
                     "contacts": {
                         "fullName": "Журавлев Илья",
-                        "phone": "79536762399",
+                        "phone": "+79536762399",
                         "email": "ilya.zhuravlev@hrb.software"
                     }
                 },
@@ -73,7 +73,70 @@ from starlette.testclient import TestClient
     ]
 )
 def test_parser(client: TestClient, data, result):
-    resp = client.post(f"/convert", content=json.dumps(data))
+    resp = client.post(f"/convert", json=data)
     response_data = json.loads(resp.content.decode('utf-8'))
     assert resp.status_code == 200
     assert response_data == result
+
+
+@pytest.mark.parametrize(
+    "data, expected_status",
+    [
+        (
+                {
+                    "description": "Test description",
+                    "employment": "fullDay",
+                    "address": {
+                        "region": "Кировская",
+                        "city": "Киров",
+                        "value": "г Киров, ул Володарского, д 157",
+                        "lat": 58.593565,
+                        "lng": 49.672739
+                    },
+                    "name": "Junior Backend-developer",
+                    "salary": {
+                        "from": 30000,
+                        "to": 70000,
+                        "currency": "RUR",
+                        "gross": False
+                    },
+                    "contacts": {
+                        "fullName": "Иванов Иван",
+                        "phone": "+1234567890",
+                        "email": "ivanov@example.com"
+                    }
+                },
+                422,
+        ),
+
+        (
+                {
+                    "description": "Test description",
+                    "employment": "fullDay",
+                    "address": {
+                        "region": "Кировская",
+                        "city": "Киров",
+                        "value": "г Киров, ул Володарского, д 157",
+                        "lat": 58.593565,
+                        "lng": 49.672739
+                    },
+                    "name": "Junior Backend-developer",
+                    "salary": {
+                        "from": 30000,
+                        "to": 70000,
+                        "currency": "RUR",
+                        "gross": False
+                    },
+                    "contacts": {
+                        "fullName": "Иванов Иван",
+                        "phone": "+79876543210987654321",
+                        "email": "ivanov@example.com"
+                    }
+                },
+                422,
+        ),
+    ]
+)
+def test_invalid_phone(client: TestClient, data, expected_status):
+    resp = client.post("/convert", json=data)
+    assert resp.status_code == expected_status
